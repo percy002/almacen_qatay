@@ -1,12 +1,16 @@
 <?php
 
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductVariantController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseEntryController;
 use App\Http\Controllers\WarehouseExitController;
 use App\Models\ProductVariant;
+use App\Models\WarehouseEntry;
+use App\Models\WarehouseExit;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -19,9 +23,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         $stockSnapshot = ProductVariant::query()
             ->with('product:id,name,min_stock')
-            ->orderBy('current_stock')
-            ->orderBy('id')
-            ->limit(10)
+            ->join('products', 'product_variants.product_id', '=', 'products.id')
+            ->select('product_variants.*')
+            ->orderByRaw('CASE WHEN product_variants.current_stock <= products.min_stock THEN 0 ELSE 1 END ASC')
+            ->orderByRaw('(SELECT COALESCE(SUM(quantity), 0) FROM warehouse_exit_items WHERE product_variant_id = product_variants.id) DESC')
+            ->limit(12)
             ->get()
             ->map(fn (ProductVariant $variant): array => [
                 'id' => $variant->id,
@@ -31,14 +37,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 'current_stock' => $variant->current_stock,
                 'min_stock' => $variant->product?->min_stock,
                 'status' => $variant->current_stock <= ($variant->product?->min_stock ?? 0) ? 'Bajo mínimo' : 'Disponible',
+                'image_url' => $variant->image_url,
             ])
             ->values();
 
         // Métricas del día
         $today = now('America/Lima')->toDateString();
         $alertCount = $stockSnapshot->where('status', 'Bajo mínimo')->count();
-        $entriesCount = \App\Models\WarehouseEntry::whereDate('entry_date', $today)->count();
-        $exitsCount = \App\Models\WarehouseExit::whereDate('exit_date', $today)->count();
+        $entriesCount = WarehouseEntry::whereDate('entry_date', $today)->count();
+        $exitsCount = WarehouseExit::whereDate('exit_date', $today)->count();
         $movementsCount = $entriesCount + $exitsCount;
 
         return Inertia::render('dashboard', [
@@ -53,18 +60,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     // Productos
-    Route::get('products', [\App\Http\Controllers\ProductController::class, 'index'])->name('products.index');
-    Route::get('products/create', [\App\Http\Controllers\ProductController::class, 'create'])->middleware('role:admin')->name('products.create');
-    Route::post('products', [\App\Http\Controllers\ProductController::class, 'store'])->middleware('role:admin')->name('products.store');
-    Route::get('products/{product}', [\App\Http\Controllers\ProductController::class, 'show'])->name('products.show');
-    Route::get('products/{product}/edit', [\App\Http\Controllers\ProductController::class, 'edit'])->middleware('role:admin')->name('products.edit');
-    Route::put('products/{product}', [\App\Http\Controllers\ProductController::class, 'update'])->middleware('role:admin')->name('products.update');
-    Route::delete('products/{product}', [\App\Http\Controllers\ProductController::class, 'destroy'])->middleware('role:admin')->name('products.destroy');
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products/create', [ProductController::class, 'create'])->middleware('role:admin')->name('products.create');
+    Route::post('products', [ProductController::class, 'store'])->middleware('role:admin')->name('products.store');
+    Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
+    Route::get('products/{product}/edit', [ProductController::class, 'edit'])->middleware('role:admin')->name('products.edit');
+    Route::put('products/{product}', [ProductController::class, 'update'])->middleware('role:admin')->name('products.update');
+    Route::delete('products/{product}', [ProductController::class, 'destroy'])->middleware('role:admin')->name('products.destroy');
 
     // Variantes
-    Route::post('products/{product}/variants', [\App\Http\Controllers\ProductVariantController::class, 'store'])->middleware('role:admin')->name('products.variants.store');
-    Route::put('variants/{variant}', [\App\Http\Controllers\ProductVariantController::class, 'update'])->middleware('role:admin')->name('variants.update');
-    Route::delete('variants/{variant}', [\App\Http\Controllers\ProductVariantController::class, 'destroy'])->middleware('role:admin')->name('variants.destroy');
+    Route::post('products/{product}/variants', [ProductVariantController::class, 'store'])->middleware('role:admin')->name('products.variants.store');
+    Route::put('variants/{variant}', [ProductVariantController::class, 'update'])->middleware('role:admin')->name('variants.update');
+    Route::delete('variants/{variant}', [ProductVariantController::class, 'destroy'])->middleware('role:admin')->name('variants.destroy');
 
     // Usuarios
     Route::resource('users', UserController::class);
