@@ -28,6 +28,8 @@ class StoreProductVariantRequest extends FormRequest
         return [
             'variant_name' => ['required', 'string', 'max:100'],
             'sku' => ['nullable', 'string', 'max:80', 'unique:product_variants,sku'],
+            'images' => ['required', 'array', 'min:1', 'max:3'],
+            'images.*' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }

@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductVariant extends Model
@@ -31,7 +33,19 @@ class ProductVariant extends Model
         'product_id',
         'variant_name',
         'sku',
+        'image_path',
+        'image_paths',
         'current_stock',
+    ];
+
+    protected $casts = [
+        'image_paths' => 'array',
+    ];
+
+    protected $appends = [
+        'image_url',
+        'image_urls',
+        'gallery_paths',
     ];
 
     /**
@@ -40,6 +54,30 @@ class ProductVariant extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_urls[0] ?? null;
+    }
+
+    public function getImageUrlsAttribute(): array
+    {
+        return array_values(array_filter(array_map(
+            fn (string $path): string => Storage::disk('public')->url($path),
+            $this->gallery_paths
+        )));
+    }
+
+    public function getGalleryPathsAttribute(): array
+    {
+        $paths = array_values(array_filter(Arr::wrap($this->image_paths)));
+
+        if ($paths === [] && filled($this->image_path)) {
+            $paths[] = $this->image_path;
+        }
+
+        return array_values(array_slice($paths, 0, 3));
     }
 
     private static function generateUniqueSku(?int $productId): string

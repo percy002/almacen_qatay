@@ -30,6 +30,12 @@ class UpdateProductVariantRequest extends FormRequest
         return [
             'variant_name' => ['required', 'string', 'max:100'],
             'sku' => ['nullable', 'string', 'max:80', Rule::unique('product_variants', 'sku')->ignore($variant?->id)],
+            'original_images' => ['nullable', 'array', 'max:3'],
+            'original_images.*' => ['nullable', 'string'],
+            'current_images' => ['nullable', 'array', 'max:3'],
+            'current_images.*' => ['nullable', 'string'],
+            'images' => ['nullable', 'array', 'max:3'],
+            'images.*' => ['nullable', 'image', 'max:2048'],
         ];
     }
 }
