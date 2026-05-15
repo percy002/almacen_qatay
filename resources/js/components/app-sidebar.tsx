@@ -28,12 +28,12 @@ const mainNavItems: NavItem[] = [
         icon: Package,
     },
     {
-        title: 'Entradas',
+        title: 'Recepción',
         href: '/entries',
         icon: ArrowDownCircle,
     },
     {
-        title: 'Salidas',
+        title: 'Despacho',
         href: '/exits',
         icon: ArrowUpCircle,
     },
@@ -63,7 +63,7 @@ const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="inset" className="md:pt-4 md:pl-4">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

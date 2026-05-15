@@ -4,7 +4,17 @@ import AppLayout from '@/components/layouts/AppLayout';
 export default function Show({ product }) {
     return (
         <AppLayout title={`Detalle: ${product.name}`}>
-            <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h1 className="text-2xl font-bold">{product.name}</h1>
+                {can('update', 'Product') && (
+                    <a
+                        href={route('products.edit', product.id)}
+                        className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+                    >
+                        Gestionar variantes
+                    </a>
+                )}
+            </div>
             <div className="mb-2">Código: {product.internal_code}</div>
             <div className="mb-2">Estado: {product.status}</div>
             <div className="mb-2">Stock mínimo: {product.min_stock}</div>

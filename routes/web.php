@@ -6,7 +6,9 @@ use App\Http\Controllers\StockAdjustmentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseEntryController;
 use App\Http\Controllers\WarehouseExitController;
+use App\Models\ProductVariant;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::inertia('/', 'welcome', [
@@ -14,7 +16,41 @@ Route::inertia('/', 'welcome', [
 ])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', function () {
+        $stockSnapshot = ProductVariant::query()
+            ->with('product:id,name,min_stock')
+            ->orderBy('current_stock')
+            ->orderBy('id')
+            ->limit(10)
+            ->get()
+            ->map(fn (ProductVariant $variant): array => [
+                'id' => $variant->id,
+                'product_name' => $variant->product?->name,
+                'variant_name' => $variant->variant_name,
+                'sku' => $variant->sku,
+                'current_stock' => $variant->current_stock,
+                'min_stock' => $variant->product?->min_stock,
+                'status' => $variant->current_stock <= ($variant->product?->min_stock ?? 0) ? 'Bajo mínimo' : 'Disponible',
+            ])
+            ->values();
+
+        // Métricas del día
+        $today = now('America/Lima')->toDateString();
+        $alertCount = $stockSnapshot->where('status', 'Bajo mínimo')->count();
+        $entriesCount = \App\Models\WarehouseEntry::whereDate('entry_date', $today)->count();
+        $exitsCount = \App\Models\WarehouseExit::whereDate('exit_date', $today)->count();
+        $movementsCount = $entriesCount + $exitsCount;
+
+        return Inertia::render('dashboard', [
+            'stockSnapshot' => $stockSnapshot,
+            'dashboardMetrics' => [
+                'alertCount' => $alertCount,
+                'entriesCount' => $entriesCount,
+                'exitsCount' => $exitsCount,
+                'movementsCount' => $movementsCount,
+            ],
+        ]);
+    })->name('dashboard');
 
     // Productos
     Route::get('products', [\App\Http\Controllers\ProductController::class, 'index'])->name('products.index');

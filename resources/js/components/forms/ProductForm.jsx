@@ -2,6 +2,8 @@ import React from 'react';
 import { useForm } from '@inertiajs/react';
 
 export default function ProductForm({ product = {} }) {
+    const isEdit = Boolean(product.id);
+
     const { data, setData, post, put, processing, errors } = useForm({
         name: product.name || '',
         internal_code: product.internal_code || '',
@@ -12,7 +14,7 @@ export default function ProductForm({ product = {} }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (product.id) {
+        if (isEdit) {
             put(route('products.update', product.id));
         } else {
             post(route('products.store'));
@@ -31,16 +33,19 @@ export default function ProductForm({ product = {} }) {
                 />
                 {errors.name && <div className="text-red-600 text-sm">{errors.name}</div>}
             </div>
-            <div>
-                <label className="block font-semibold">Código Interno</label>
-                <input
-                    type="text"
-                    className="input"
-                    value={data.internal_code}
-                    onChange={e => setData('internal_code', e.target.value)}
-                />
-                {errors.internal_code && <div className="text-red-600 text-sm">{errors.internal_code}</div>}
-            </div>
+            {isEdit && (
+                <div>
+                    <label className="block font-semibold">Código Interno (opcional)</label>
+                    <input
+                        type="text"
+                        className="input"
+                        value={data.internal_code}
+                        placeholder="Se genera automáticamente si lo dejas vacío"
+                        onChange={e => setData('internal_code', e.target.value)}
+                    />
+                    {errors.internal_code && <div className="text-red-600 text-sm">{errors.internal_code}</div>}
+                </div>
+            )}
             <div>
                 <label className="block font-semibold">Descripción</label>
                 <textarea
@@ -78,7 +83,7 @@ export default function ProductForm({ product = {} }) {
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 disabled={processing}
             >
-                {product.id ? 'Actualizar' : 'Crear'}
+                {isEdit ? 'Actualizar' : 'Crear'}
             </button>
         </form>
     );

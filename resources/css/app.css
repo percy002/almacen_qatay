@@ -62,39 +62,39 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
+    --background: #c5cfca;
+    --foreground: #45554c;
+    --card: #f0f0ef;
+    --card-foreground: #45554c;
+    --popover: #f8f8f7;
+    --popover-foreground: #45554c;
+    --primary: #c79a6f;
+    --primary-foreground: #f6efe5;
+    --secondary: #dde3de;
+    --secondary-foreground: #45554c;
+    --muted: #e4e8e2;
+    --muted-foreground: #6f7d75;
+    --accent: #d7ddca;
+    --accent-foreground: #45554c;
     --destructive: oklch(0.577 0.245 27.325);
     --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
+    --border: #a4b0a8;
+    --input: #cfd6d1;
+    --ring: #9aa89f;
     --chart-1: oklch(0.646 0.222 41.116);
     --chart-2: oklch(0.6 0.118 184.704);
     --chart-3: oklch(0.398 0.07 227.392);
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
+    --sidebar: #7e9084;
+    --sidebar-foreground: #eff3e8;
+    --sidebar-primary: #4d5b52;
+    --sidebar-primary-foreground: #dfbf9a;
+    --sidebar-accent: #4d5b52;
+    --sidebar-accent-foreground: #eff3e8;
+    --sidebar-border: #8a9990;
+    --sidebar-ring: #6e7f75;
 }
 
 .dark {
@@ -139,5 +139,21 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    #app {
+        @apply min-h-screen;
+    }
+}
+
+@layer components {
+    .input {
+        @apply h-10 w-full rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground shadow-xs outline-none transition-[color,box-shadow,border-color];
+        @apply placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/40;
+        @apply disabled:cursor-not-allowed disabled:opacity-60;
+    }
+
+    textarea.input {
+        @apply min-h-24 resize-y;
     }
 }

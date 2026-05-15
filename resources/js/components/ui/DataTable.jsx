@@ -58,7 +58,10 @@ export default function DataTable({ columns = [], data = [], paginator = null, s
                     <tbody>
                         {filteredData.length > 0 ? (
                             filteredData.map((row, index) => (
-                                <tr key={row.id ?? index} className="border-t">
+                                <tr
+                                    key={row.id ?? index}
+                                    className="border-t transition-colors hover:bg-[#e4ebe6]"
+                                >
                                     {columns.map(column => (
                                         <td key={`${row.id ?? index}-${column.key}`} className="px-3 py-2 align-top">
                                             {row[column.key] ?? '—'}

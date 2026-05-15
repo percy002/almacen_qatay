@@ -17,12 +17,20 @@ export default function Index() {
     const data = products.data.map(product => ({
         ...product,
         actions: (
-            <a
-                href={route('products.show', product.id)}
-                className="text-blue-600 hover:underline"
-            >
-                Ver
-            </a>
+            <div className="flex items-center gap-3">
+                <a
+                    href={route('products.show', product.id)}
+                    className="text-blue-600 hover:underline"
+                >
+                    Ver
+                </a>
+                <a
+                    href={route('products.edit', product.id)}
+                    className="text-emerald-700 hover:underline"
+                >
+                    Variantes
+                </a>
+            </div>
         ),
     }));
 

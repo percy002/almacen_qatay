@@ -22,10 +22,11 @@ class ProductVariantFactory extends Factory
         $size = $this->faker->randomElement($sizes);
         $color = $this->faker->randomElement($colors);
         $variantName = "Talla $size - Color $color";
+
         return [
             'product_id' => null, // Se asigna en el seeder
             'variant_name' => $variantName,
-            'sku' => strtoupper($this->faker->unique()->bothify('SKU-#####')),
+            'sku' => null,
             'current_stock' => $this->faker->numberBetween(0, 50),
         ];
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 
 export default function EntryForm({ products, entry = null }) {
@@ -14,7 +14,7 @@ export default function EntryForm({ products, entry = null }) {
 
         return [{ product_id: '', variant_id: '', quantity: 1 }];
     });
-    const { data, setData, post, put, transform, processing, errors } = useForm({
+    const { data, setData, post, put, processing, errors } = useForm({
         entry_date: entry?.entry_date ?? '',
         notes: entry?.notes ?? '',
         items: [],
@@ -37,14 +37,14 @@ export default function EntryForm({ products, entry = null }) {
         quantity: Number(row.quantity) || 0,
     }));
 
+    useEffect(() => {
+        setData('items', normalizeItems());
+    }, [rows]);
+
+    const fieldError = (idx, field) => errors[`items.${idx}.${field}`];
+
     const handleSubmit = e => {
         e.preventDefault();
-        const items = normalizeItems();
-
-        transform(formData => ({
-            ...formData,
-            items,
-        }));
 
         if (isEdit) {
             put(route('entries.update', entry.id));
@@ -114,6 +114,9 @@ export default function EntryForm({ products, entry = null }) {
                                             <option key={v.id} value={v.id}>{v.variant_name}</option>
                                         ))}
                                     </select>
+                                    {fieldError(idx, 'variant_id') && (
+                                        <div className="mt-1 text-xs text-red-600">{fieldError(idx, 'variant_id')}</div>
+                                    )}
                                 </td>
                                 <td className="border px-2 py-1">
                                     <input
@@ -123,6 +126,9 @@ export default function EntryForm({ products, entry = null }) {
                                         value={row.quantity}
                                         onChange={e => handleRowChange(idx, 'quantity', e.target.value)}
                                     />
+                                    {fieldError(idx, 'quantity') && (
+                                        <div className="mt-1 text-xs text-red-600">{fieldError(idx, 'quantity')}</div>
+                                    )}
                                 </td>
                                 <td className="border px-2 py-1">
                                     {rows.length > 1 && (
@@ -133,6 +139,7 @@ export default function EntryForm({ products, entry = null }) {
                         ))}
                     </tbody>
                 </table>
+                {errors.items && <div className="text-red-600 text-sm">{errors.items}</div>}
                 <button type="button" onClick={addRow} className="bg-gray-200 px-2 py-1 rounded">Agregar fila</button>
             </div>
             <button

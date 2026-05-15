@@ -14,6 +14,7 @@ class StoreProductVariantRequest extends FormRequest
     {
         // Solo admin puede crear variantes
         $product = $this->route('product');
+
         return $this->user()?->can('update', $product);
     }
 
@@ -26,8 +27,7 @@ class StoreProductVariantRequest extends FormRequest
     {
         return [
             'variant_name' => ['required', 'string', 'max:100'],
-            'sku' => ['required', 'string', 'max:80', 'unique:product_variants,sku'],
-            'current_stock' => ['required', 'integer', 'min:0'],
+            'sku' => ['nullable', 'string', 'max:80', 'unique:product_variants,sku'],
         ];
     }
 }

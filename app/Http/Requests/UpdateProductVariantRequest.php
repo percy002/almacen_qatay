@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateProductVariantRequest extends FormRequest
 {
@@ -13,6 +14,7 @@ class UpdateProductVariantRequest extends FormRequest
     public function authorize(): bool
     {
         $variant = $this->route('variant');
+
         return $this->user()?->can('update', $variant?->product ?? null);
     }
 
@@ -24,10 +26,10 @@ class UpdateProductVariantRequest extends FormRequest
     public function rules(): array
     {
         $variant = $this->route('variant');
+
         return [
             'variant_name' => ['required', 'string', 'max:100'],
-            'sku' => ['required', 'string', 'max:80', 'unique:product_variants,sku,' . ($variant?->id ?? 'NULL')],
-            'current_stock' => ['required', 'integer', 'min:0'],
+            'sku' => ['nullable', 'string', 'max:80', Rule::unique('product_variants', 'sku')->ignore($variant?->id)],
         ];
     }
 }

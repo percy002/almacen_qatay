@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
@@ -12,12 +13,18 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Product::factory(8)->create()->each(function ($product) {
-            // Para cada producto, crear entre 2 y 4 variantes
+        Product::factory(8)->create()->each(function ($product) {
+            ProductVariant::factory()->create([
+                'product_id' => $product->id,
+                'variant_name' => 'Original',
+            ]);
+
+            // Para cada producto, crear entre 0 y 2 variantes adicionales
             $variants = collect(['S', 'M', 'L', 'XL']);
             $colors = ['Rojo', 'Azul', 'Verde', 'Negro', 'Blanco'];
-            $numVariants = rand(2, 4);
-            $used = [];
+            $numVariants = rand(0, 2);
+            $used = ['Original'];
+
             for ($i = 0; $i < $numVariants; $i++) {
                 do {
                     $size = $variants->random();
@@ -25,7 +32,8 @@ class ProductSeeder extends Seeder
                     $key = $size.'-'.$color;
                 } while (in_array($key, $used));
                 $used[] = $key;
-                \App\Models\ProductVariant::factory()->create([
+
+                ProductVariant::factory()->create([
                     'product_id' => $product->id,
                     'variant_name' => "Talla $size - Color $color",
                 ]);

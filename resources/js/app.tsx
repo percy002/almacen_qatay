@@ -33,6 +33,7 @@ const namedRoutes: Record<string, string> = {
     'products.create': '/products/create',
     'products.store': '/products',
     'products.show': '/products/{product}',
+    'products.edit': '/products/{product}/edit',
     'products.update': '/products/{product}',
     'products.variants.store': '/products/{product}/variants',
     'variants.update': '/variants/{variant}',
