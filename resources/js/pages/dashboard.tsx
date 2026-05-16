@@ -95,7 +95,7 @@ export default function Dashboard({ stockSnapshot = [], dashboardMetrics = {} as
                     </div>
 
                     <div className="bg-[#f0f0ef] p-4">
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4">
                             {(stockSnapshot as StockSnapshotItem[]).map(item => {
                                 const cfg = statusConfig(item.status, item.current_stock, item.min_stock);
                                 return (
@@ -103,8 +103,8 @@ export default function Dashboard({ stockSnapshot = [], dashboardMetrics = {} as
                                         key={item.id}
                                         className="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5"
                                     >
-                                        {/* Image area — portrait 3:4 */}
-                                        <div className="relative aspect-[3/4] w-full shrink-0 bg-muted">
+                                        {/* Image area */}
+                                        <div className="relative h-64 w-full shrink-0 bg-muted sm:h-90">
                                             {item.image_url ? (
                                                 <img
                                                     src={item.image_url}
