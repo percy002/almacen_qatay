@@ -28,6 +28,7 @@ class ProductVariantFactory extends Factory
             'variant_name' => $variantName,
             'sku' => null,
             'current_stock' => $this->faker->numberBetween(0, 50),
+            'min_stock' => $this->faker->numberBetween(0, 20),
         ];
     }
 }

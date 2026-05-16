@@ -13,31 +13,38 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::factory(8)->create()->each(function ($product) {
-            ProductVariant::factory()->create([
-                'product_id' => $product->id,
-                'variant_name' => 'Original',
+        $products = [
+            ['name' => 'Poncho rayas', 'min_stock' => 20],
+            ['name' => 'Poncho buena vista bucle', 'min_stock' => 20],
+            ['name' => 'Capa espiga', 'min_stock' => 20],
+            ['name' => 'Capa bucle', 'min_stock' => 15],
+            ['name' => 'Capa PAYAY', 'min_stock' => 20],
+            ['name' => 'Chullo renacimiento', 'min_stock' => 50],
+            ['name' => 'Chullo tumi', 'min_stock' => 20],
+            ['name' => 'Chullo crocus', 'min_stock' => 10],
+            ['name' => 'GORRO BUCLE', 'min_stock' => 10],
+            ['name' => 'Gorro bucle targeta', 'min_stock' => 10],
+            ['name' => 'Cuellera tarjeta', 'min_stock' => 20],
+            ['name' => 'cuellera targeta doble', 'min_stock' => 20],
+            ['name' => 'Miton tarjeta', 'min_stock' => 40],
+            ['name' => 'Miton llano', 'min_stock' => 50],
+        ];
+
+        foreach ($products as $prod) {
+            $product = Product::create([
+                'name' => $prod['name'],
+                'internal_code' => null,
+                'description' => null,
+                'status' => 'activo',
             ]);
 
-            // Para cada producto, crear entre 0 y 2 variantes adicionales
-            $variants = collect(['S', 'M', 'L', 'XL']);
-            $colors = ['Rojo', 'Azul', 'Verde', 'Negro', 'Blanco'];
-            $numVariants = rand(0, 2);
-            $used = ['Original'];
-
-            for ($i = 0; $i < $numVariants; $i++) {
-                do {
-                    $size = $variants->random();
-                    $color = $colors[array_rand($colors)];
-                    $key = $size.'-'.$color;
-                } while (in_array($key, $used));
-                $used[] = $key;
-
-                ProductVariant::factory()->create([
-                    'product_id' => $product->id,
-                    'variant_name' => "Talla $size - Color $color",
-                ]);
-            }
-        });
+            ProductVariant::create([
+                'product_id' => $product->id,
+                'variant_name' => 'Original',
+                'sku' => null,
+                'current_stock' => 0,
+                'min_stock' => $prod['min_stock'],
+            ]);
+        }
     }
 }

@@ -21,7 +21,6 @@ class ProductFactory extends Factory
             'name' => $this->faker->unique()->words(3, true),
             'internal_code' => strtoupper($this->faker->unique()->bothify('PRD-####')),
             'description' => $this->faker->optional()->sentence(8),
-            'min_stock' => $this->faker->numberBetween(5, 20),
             'status' => 'activo',
         ];
     }
