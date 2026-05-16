@@ -36,6 +36,7 @@ class ProductVariant extends Model
         'image_path',
         'image_paths',
         'current_stock',
+        'min_stock',
     ];
 
     protected $casts = [

@@ -52,8 +52,8 @@ class ReportController extends Controller
                 'variant_name' => $variant->variant_name,
                 'sku' => $variant->sku,
                 'current_stock' => $variant->current_stock,
-                'min_stock' => $variant->product?->min_stock,
-                'status' => $variant->current_stock <= ($variant->product?->min_stock ?? 0) ? 'Bajo mínimo' : 'Disponible',
+                'min_stock' => $variant->min_stock,
+                'status' => $variant->current_stock <= ($variant->min_stock ?? 0) ? 'Bajo mínimo' : 'Disponible',
             ]);
 
         return Inertia::render('Reports/Stock', [

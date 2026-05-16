@@ -31,6 +31,7 @@ export default function VariantForm({ productId, variant = {}, onSaved, onCancel
     const { data, setData, post, transform, processing, progress, errors, reset, clearErrors } = useForm({
         variant_name: safeVariant.variant_name || '',
         sku: safeVariant.sku || '',
+        min_stock: safeVariant.min_stock ?? 0,
     });
 
     useEffect(() => {
@@ -40,6 +41,7 @@ export default function VariantForm({ productId, variant = {}, onSaved, onCancel
         setActiveSlot(getInitialActiveIndex(nextSlots));
         setData('variant_name', safeVariant.variant_name || '');
         setData('sku', safeVariant.sku || '');
+        setData('min_stock', safeVariant.min_stock ?? 0);
         clearErrors();
     }, [isEdit, safeVariant.id]);
 
@@ -164,6 +166,17 @@ export default function VariantForm({ productId, variant = {}, onSaved, onCancel
                     />
                     {!errors.sku && <div className="mt-1 text-xs text-gray-600">Si no ingresas SKU, el sistema lo crea automáticamente.</div>}
                     {errors.sku && <div className="text-sm text-red-600">{errors.sku}</div>}
+                </div>
+                <div>
+                    <label className="block font-semibold">Stock Mínimo</label>
+                    <input
+                        type="number"
+                        className="input"
+                        value={data.min_stock}
+                        min={0}
+                        onChange={e => setData('min_stock', Number(e.target.value))}
+                    />
+                    {errors.min_stock && <div className="text-sm text-red-600">{errors.min_stock}</div>}
                 </div>
                 <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900">
                     Puedes cargar hasta 3 imágenes. Usa las flechas para navegar entre ellas.

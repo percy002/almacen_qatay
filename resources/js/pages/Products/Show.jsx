@@ -17,7 +17,6 @@ export default function Show({ product }) {
             </div>
             <div className="mb-2">Código: {product.internal_code}</div>
             <div className="mb-2">Estado: {product.status}</div>
-            <div className="mb-2">Stock mínimo: {product.min_stock}</div>
             <div className="mb-2">Descripción: {product.description}</div>
             <div className="mt-6">
                 <h2 className="text-lg font-semibold mb-2">Variantes</h2>
@@ -29,6 +28,7 @@ export default function Show({ product }) {
                                 <th className="px-2 py-1">Nombre</th>
                                 <th className="px-2 py-1">SKU</th>
                                 <th className="px-2 py-1">Stock</th>
+                                <th className="px-2 py-1">Stock Mínimo</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,6 +48,7 @@ export default function Show({ product }) {
                                     <td className="border px-2 py-1">{variant.variant_name}</td>
                                     <td className="border px-2 py-1">{variant.sku}</td>
                                     <td className="border px-2 py-1">{variant.current_stock}</td>
+                                    <td className="border px-2 py-1">{variant.min_stock}</td>
                                 </tr>
                             ))}
                         </tbody>
