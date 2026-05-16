@@ -171,9 +171,26 @@ export default function VariantForm({ productId, variant = {}, onSaved, onCancel
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-700">
                     El stock inicial de la variante es 0. Para ingresar stock usa Recepción.
                 </div>
+
+                <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+                    <button
+                        type="button"
+                        onClick={cancelForm}
+                        className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="submit"
+                        className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={processing}
+                    >
+                        {isEdit ? 'Actualizar variante' : 'Agregar variante'}
+                    </button>
+                </div>
             </div>
 
-            <aside className="max-h-[70dvh] rounded-[28px] border border-slate-800/20 bg-slate-950 p-2 text-white shadow-2xl shadow-slate-900/20">
+            <aside className="rounded-[28px] border border-slate-800/20 bg-slate-950 p-2 text-white shadow-2xl shadow-slate-900/20">
                 <div className="flex items-start justify-between gap-4">
                     <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
                         {filledSlotCount}/{MAX_IMAGE_SLOTS}
@@ -181,13 +198,13 @@ export default function VariantForm({ productId, variant = {}, onSaved, onCancel
                 </div>
 
                 <div className="mt-4 overflow-hidden rounded-[28px] border border-white/10 bg-white/5">
-                    <div className="relative flex min-h-[34rem] flex-col bg-slate-900/80">
-                        <div className="relative flex-1 overflow-hidden">
+                    <div className="relative flex flex-col bg-slate-900/80">
+                        <div className="relative h-[22rem] overflow-hidden sm:h-[24rem]">
                             {hasActiveImage ? (
                                 <img
                                     src={activeImage.previewUrl}
                                     alt="Vista previa de imagen de variante"
-                                    className="h-[400px] w-full object-contain"
+                                    className="h-full w-full object-contain"
                                 />
                             ) : (
                                 <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center text-white/55">
@@ -282,23 +299,6 @@ export default function VariantForm({ productId, variant = {}, onSaved, onCancel
 
                 {errors.images && <div className="mt-3 text-sm text-rose-300">{errors.images}</div>}
             </aside>
-
-            <div className="flex items-center justify-end gap-3 lg:col-span-2">
-                <button
-                    type="button"
-                    onClick={cancelForm}
-                    className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                >
-                    Cancelar
-                </button>
-                <button
-                    type="submit"
-                    className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                    disabled={processing}
-                >
-                    {isEdit ? 'Actualizar variante' : 'Agregar variante'}
-                </button>
-            </div>
         </form>
     );
 }
